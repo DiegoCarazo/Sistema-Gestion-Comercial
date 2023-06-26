@@ -1,11 +1,53 @@
+#Librerias
+import json
 # Gestión de Información
-    #Registro de usuarios
 
-    #Gestión de clientes
+#Registro de usuarios
+def personal():
+    nombre = input('Nombre: ')
+    correo = input('Correo: ')
+    direccion = input('Dirección: ')
+    telefono = int(input('Numero de teléfono: '))
 
-    #Registro de proveedores 
+    lista_datos = [correo, direccion, telefono]
 
-    #Cálculo del IVA:
+    temp_dic = {}
+    temp_dic.update({nombre: lista_datos})
+
+    return temp_dic
+
+#Gestión de clientes
+def clientes():
+    nombre = input('Nombre: ')
+    correo = input('Correo: ')
+    direccion = input('Direccion: ')
+    telefono = int(input('Numero de teléfono: '))
+    lista_datos = [correo, direccion, telefono]
+
+    temp_dic = {}
+    temp_dic.update({nombre: lista_datos})
+
+    return temp_dic
+
+#Registro de proveedores 
+def proveedores():
+    nombre = input('Nombre: ')
+    correo = input('Correo: ')
+    direccion = input('Direccion: ')
+    telefono = int(input('Numero de teléfono: '))
+    lista_datos = [correo, direccion, telefono]
+
+    temp_dic = {}
+    temp_dic.update({nombre: lista_datos})
+
+    return temp_dic
+dic_personal = personal()
+
+#uso del gestion de información
+with open('Datos personal.jason', 'a') as f:
+    json.dump(dic_personal, f, indent=4)
+
+#Cálculo del IVA:
 
     #Valores de IVA configurables
 
