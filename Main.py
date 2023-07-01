@@ -1,74 +1,42 @@
 # Librerías
-import json
+from inventario import *
+from datosUsuarios import *
 
 
-# Gestión de Información
-
+# ----- Gestión de Información -----
 # Registro de usuarios
-def personal():
+def Gestión_de_Información():
+    clase = input('Selecciones "personal", "cliente o "proovedor": ')
     nombre = input('Nombre: ')
     correo = input('Correo: ')
     direccion = input('Dirección: ')
     telefono = int(input('Numero de teléfono: '))
-
-    lista_datos = [correo, direccion, telefono]
-
-    temp_dic = {}
-    temp_dic.update({nombre: lista_datos})
-
+    lista_datos = [nombre, correo, direccion, telefono]
+    temp_dic= {clase: lista_datos}
     return temp_dic
 
+# Gestión_de_Información_dic = {'Tipo': ['Nombre', 'Correo', 'Direccion', Telefono]}
+Gestión_de_Información_dic.update(Gestión_de_Información())
+print(Gestión_de_Información_dic)
 
-# Gestión de clientes
-def clientes():
-    nombre = input('Nombre: ')
-    correo = input('Correo: ')
-    direccion = input('Direccion: ')
-    telefono = int(input('Numero de teléfono: '))
-    lista_datos = [correo, direccion, telefono]
 
-    temp_dic = {}
-    temp_dic.update({nombre: lista_datos})
-
+# ----- Catálogo de Productos -----
+def catalogo_de_productos():
+    producto = input('Nombre del producto: ')
+    precio = int(input('Precio: '))
+    proveedor = input('Proovedor: ')
+    iva = float(input('IVA a aplicar: '))
+    descripcion = input('Descripcion: ')
+    lista_datos = [precio, proveedor, iva, descripcion]
+    temp_dic = {producto: lista_datos}
     return temp_dic
+ 
+
+# articulo : [Precio, proveedor, IVA, Descripcion]
+inventario.update(catalogo_de_productos())
 
 
-# Registro de proveedores 
-def proveedores():
-    nombre = input('Nombre: ')
-    correo = input('Correo: ')
-    direccion = input('Direccion: ')
-    telefono = int(input('Numero de teléfono: '))
-    lista_datos = [correo, direccion, telefono]
-
-    temp_dic = {}
-    temp_dic.update({nombre: lista_datos})
-
-    return temp_dic
-
-
-dic_personal = personal()
-
-# uso del gestion de información
-with open('Datos personal.jason', 'a') as f:
-    json.dump(dic_personal, f, indent=4)
-
-# Gestión de Inventarios de Ventas:
-# Registro de ventas
-
-# Actualización de inventario
-
-# Control de stock
-inventario = {
-    # articulo : [Precio, proveedor, IVA]
-    'Camiseta': [5500, 'Nike', 0.13],
-    'Pantalones': [12000, 'Adidas', 0.04],
-    'Proteína': [35000, 'Builder', 0.02],
-    'Pesas': [40000, 'Builder', 0.01]
-}
-
-
-# Cálculo del IVA:
+# ----- Cálculo del IVA -----
 # Valores de IVA configurables | IVA localizado en el inventario
 def calculo_iva():
     print(inventario)
@@ -76,23 +44,15 @@ def calculo_iva():
     iva = inventario[articulo][2]
     precio = inventario[articulo][0]
     calculo = precio + precio * iva
-    print(calculo)
+    print('El precio final con el iva del', iva *100, 'es de: ', calculo)
 
 
 calculo_iva()
 
-# Generación de Informes:
-# Informes de ventas
+# ----- Gestión de Inventarios de Ventas -----
 
-# Informes de inventario
+# ----- Generación de Informes ----- 
 
-# Informes de clientes
+# ----- Sistema de Pagos -----
 
-# Registro de productos
-
-# Sistema de Pagos
-# Registro de métodos de pago
-
-# Selección de método de pago
-
-# Integración de correo electrónico
+# ----- Sistema de gráficos -----
