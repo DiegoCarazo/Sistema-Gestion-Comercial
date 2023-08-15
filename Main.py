@@ -1,10 +1,20 @@
 import json
 from tkinter import *
 from tkinter import ttk
+from tkinter.messagebox import showinfo
 
 root = Tk()
 root.geometry('800x600')
 root.config(background='white')
+root.title("SGC: Hermes")
+root.iconbitmap("Logo.ico")
+
+
+def resultado():
+    showinfo(
+        title='Resultado',
+        message='Los datos fueron guardados correctamente'
+    )
 
 
 def gestionar_info():
@@ -16,6 +26,7 @@ def gestionar_info():
             proovedor = {nombre_dato: [correo_dato, direccion_dato, telefono_dato, puesto_dato]}
             with open("DB_Personal.json", "a") as fp:
                 json.dump(proovedor, fp, indent=4)
+            return resultado()
 
         Label(text="Nombre: ", background="white", font=("Arial", 12)).grid(row=3, column=1)
         Label(text="Correo: ", background="white", font=("Arial", 12)).grid(row=4, column=1)
@@ -47,6 +58,7 @@ def gestionar_info():
             cliente = {nombre_dato: [correo_dato, telefono_dato, empresa_dato]}
             with open("DB_Cliente.json", "a") as fp:
                 json.dump(cliente, fp, indent=4)
+            return resultado()
 
         Label(text="Nombre: ", background="white", font=("Arial", 12)).grid(row=3, column=1)
         Label(text="Correo: ", background="white", font=("Arial", 12)).grid(row=4, column=1)
@@ -75,6 +87,7 @@ def gestionar_info():
             trabajador = {empresa_dato: {marca_dato: producto_dato}}
             with open("DB_Proovedor.json", "a") as fp:
                 json.dump(trabajador, fp, indent=4)
+            return resultado()
 
         Label(text="Empresa: ", background="white", font=("Arial", 12)).grid(row=3, column=1)
         Label(text="Marca: ", background="white", font=("Arial", 12)).grid(row=4, column=1)
@@ -104,6 +117,8 @@ def catalogo_de_productos():
         items = {producto_datos: [precios_datos, proveedores_datos, iva_datos, descripcion_datos]}
         with open("DB_Inventario.json", "a") as fp:
             json.dump(items, fp, indent=4)
+        return resultado()
+
 
     # Labels de la sección
     Label(text="Catalogo de productos", background="white", font=("Arial", 12)).grid(row=1, column=2)
@@ -120,7 +135,9 @@ def catalogo_de_productos():
     Label(text="Descripción: ", background="white", font=("Arial", 12)).grid(row=8, column=1, sticky=W)
 
     # Botón de subir
-    btn = ttk.Button(root, text="Subir", command=lambda: subir_datos(producto.get(), precio.get(), proveedor.get(), iva.get(), descripcion.get()))
+    btn = ttk.Button(root, text="Subir",
+                     command=lambda: subir_datos(producto.get(), precio.get(), proveedor.get(), iva.get(),
+                                                 descripcion.get()))
     btn.grid(row=9, column=3)
 
     # Introducción de información
@@ -144,20 +161,25 @@ def sistema_pagos():
     def tarjeta_pago():
         # Usada al presionar el botón
         def subir_datos():
-            nombre_datos = nombre.get()
-            numero_datos = numero.get()
-            fecha_mes_datos = fecha_mes.get()
-            fecha_ano_datos = fecha_ano.get()
-            codigo_datos = codigo.get()
-            monto_pago_datos = monto_pago.get()
+            nombre_dato = nombre.get()
+            monto_pago_datos = int(monto_pago.get())
+            cantidad_item_datos = int(cantidad_item.get())
+            iva_dato = int(iva.get())
             item_datos = item.get()
-            cantidad_item_datos = cantidad_item.get()
+            total_pago = monto_pago_datos * cantidad_item_datos
 
-            tarjeta_usada = {
-                nombre_datos: [monto_pago_datos, item_datos, cantidad_item_datos, numero_datos, fecha_mes_datos,
-                               fecha_ano_datos, codigo_datos]}
-            print(tarjeta_usada)
-            return tarjeta_usada
+            pago = {'Compra realizada por': nombre_dato,
+                    'Monto a pagar': total_pago,
+                    'Monto ajustado por IVA': (total_pago * (iva_dato / 100) + total_pago),
+                    'Iva': iva_dato,
+                    'Cantidad de items': cantidad_item_datos,
+                    'Item pagado': item_datos,
+                    'Tipo de pago': 'Tarjeta'}
+
+            with open("Pago.json", "a") as fp:
+                json.dump(pago, fp, indent=4)
+
+            return resultado()
 
         # Labels de la sección
         Label(root, text="Ingrese los datos de la tarjeta", background="white", font=("Arial", 12)).grid(row=2,
@@ -166,32 +188,32 @@ def sistema_pagos():
                                                                                                          columnspan=2)
         Label(root, text="Nombre del titular: ", background="white").grid(row=3, column=3, stick=W)
         Label(root, text="Numero de tarjeta: ", background="white").grid(row=4, column=3, stick=W)
-        Label(root, text="Expiración(Mes): ", background="white").grid(row=5, column=3, stick=W)
-        Label(root, text="Expiración(Año): ", background="white").grid(row=6, column=3, stick=W)
-        Label(root, text="Código de seguridad: ", background="white").grid(row=7, column=3, stick=W)
-        Label(root, text="Monto del pago: ", background="white").grid(row=8, column=3, stick=W)
-        Label(root, text="Item comprado: ", background="white").grid(row=9, column=3, stick=W)
-        Label(root, text="Cantidad comprada: ", background="white").grid(row=10, column=3, stick=W)
+        Label(root, text="Expiración: ", background="white").grid(row=5, column=3, stick=W)
+        Label(root, text="Código de seguridad: ", background="white").grid(row=6, column=3, stick=W)
+        Label(root, text="Monto del pago: ", background="white").grid(row=7, column=3, stick=W)
+        Label(root, text="Cantidad comprada: ", background="white").grid(row=8, column=3, stick=W)
+        Label(root, text="IVA: ", background="white").grid(row=9, column=3, stick=W)
+        Label(root, text="Item comprado: ", background="white").grid(row=10, column=3, stick=W)
 
         # Entry de la sección
         nombre = ttk.Entry(root)
         numero = ttk.Entry(root)
         fecha_mes = ttk.Entry(root)
-        fecha_ano = ttk.Entry(root)
         codigo = ttk.Entry(root)
         monto_pago = ttk.Entry(root)
-        item = ttk.Entry(root)
         cantidad_item = ttk.Entry(root)
+        iva = ttk.Entry(root)
+        item = ttk.Entry(root)
 
         # Entry visuales
         nombre.grid(row=3, column=4, stick=W)
         numero.grid(row=4, column=4, stick=W)
         fecha_mes.grid(row=5, column=4, stick=W)
-        fecha_ano.grid(row=6, column=4, stick=W)
-        codigo.grid(row=7, column=4, stick=W)
-        monto_pago.grid(row=8, column=4, stick=W)
-        item.grid(row=9, column=4, stick=W)
-        cantidad_item.grid(row=10, column=4, stick=W)
+        codigo.grid(row=6, column=4, stick=W)
+        monto_pago.grid(row=7, column=4, stick=W)
+        cantidad_item.grid(row=8, column=4, stick=W)
+        iva.grid(row=9, column=4, stick=W)
+        item.grid(row=10, column=4, stick=W)
 
         btn_subir = ttk.Button(root, text="Pagar", command=subir_datos)
         btn_subir.grid(row=11, column=5)
@@ -199,13 +221,24 @@ def sistema_pagos():
     def transferencia_pago():
         # Usada al presionar el botón
         def subir_datos():
-            numero_recibo_datos = numero_recibo.get()
-            monto_pago_datos = monto_pago.get()
+            nombre_dato = numero_recibo.get()
+            monto_pago_datos = int(monto_pago.get())
+            cantidad_item_datos = int(cantidad_item.get())
+            iva_dato = int(iva.get())
             item_datos = item.get()
-            cantidad_item_datos = cantidad_item.get()
-            lista_datos = {numero_recibo_datos: [monto_pago_datos, item_datos, cantidad_item_datos]}
-            print(lista_datos)
-            return lista_datos
+            total_compra = monto_pago_datos * cantidad_item_datos
+
+            pago = {'Numero de recibo': nombre_dato,
+                    'Monto a pagar': total_compra,
+                    'Monto ajustado por IVA': (total_compra * (iva_dato / 100) + total_compra),
+                    'iva': iva_dato,
+                    'Cantidad de items': cantidad_item_datos,
+                    'Item pagado': item_datos,
+                    'Tipo de pago': 'Trasferencia bancaria'}
+
+            with open("Pago.json", "a") as fp:
+                json.dump(pago, fp, indent=4)
+            return resultado()
 
         # Labels de la sección
         Label(root, text="Cuenta a transferir: 0123456789", background="white", font=("Arial", 12)).grid(row=2,
@@ -218,59 +251,77 @@ def sistema_pagos():
                                                                                            columnspan=2)
         Label(root, text="Numero de recibo ", background="white", font=("Arial", 12)).grid(row=4, column=3, stick=W)
         Label(root, text="Monto: ", background="white", font=("Arial", 12)).grid(row=5, column=3, stick=W)
-        Label(root, text="Item: ", background="white", font=("Arial", 12)).grid(row=6, column=3, stick=W)
-        Label(root, text="Cantidad: ", background="white", font=("Arial", 12)).grid(row=7, column=3, stick=W)
+        Label(root, text="Cantidad: ", background="white", font=("Arial", 12)).grid(row=6, column=3, stick=W)
+        Label(root, text="Iva: ", background="white", font=("Arial", 12)).grid(row=7, column=3, stick=W)
+        Label(root, text="Item: ", background="white", font=("Arial", 12)).grid(row=8, column=3, stick=W)
 
         # Entry para la sección
         numero_recibo = ttk.Entry(root)
         monto_pago = ttk.Entry(root)
-        item = ttk.Entry(root)
         cantidad_item = ttk.Entry(root)
+        iva = ttk.Entry(root)
+        item = ttk.Entry(root)
 
         # Visual para Entry
         numero_recibo.grid(row=4, column=4, stick=W)
         monto_pago.grid(row=5, column=4, stick=W)
-        item.grid(row=6, column=4, stick=W)
-        cantidad_item.grid(row=7, column=4, stick=W)
+        cantidad_item.grid(row=6, column=4, stick=W)
+        iva.grid(row=7, column=4, stick=W)
+        item.grid(row=8, column=4, stick=W)
 
         btn_subir = ttk.Button(root, text="Pagar", command=subir_datos)
         btn_subir.grid(row=8, column=5)
 
     def efectivo_pago():
-        def subir_datos(monto_pago_datos, item_datos, cantidad_item_datos):
-            lista_pago = {"Efectivo": [monto_pago_datos, item_datos, cantidad_item_datos]}
-            print(lista_pago)
-            return lista_pago
+        def subir_datos():
+            monto_pago_datos = int(monto_pago.get())
+            cantidad_item_datos = int(cantidad_item.get())
+            iva_dato = int(iva.get())
+            item_datos = item.get()
+            total_compra = monto_pago_datos * cantidad_item_datos
+
+            pago = {'Monto a pagar': total_compra,
+                    'Monto ajustado por IVA': (total_compra * (iva_dato / 100) + total_compra),
+                    'iva': iva_dato,
+                    'Item pagado': item_datos,
+                    'Cantidad de items': cantidad_item_datos,
+                    'Tipo de pago': 'Efectivo'}
+
+            with open("Pago.json", "a") as fp:
+                json.dump(pago, fp, indent=4)
+            return resultado()
 
         # Labels de la sección
-        Label(root, text="Pago en efectivo", background="white", font=("Arial", 12)).grid(row=2, column=3,
-                                                                                          stick=W, columnspan=2)
+        Label(root, text="Pago en efectivo", background="white", font=("Arial", 12)).grid(row=2, column=3, stick=W,
+                                                                                          columnspan=2)
         Label(root, text="Monto: ", background="white", font=("Arial", 12)).grid(row=3, column=3, stick=W)
-        Label(root, text="Item: ", background="white", font=("Arial", 12)).grid(row=4, column=3, stick=W)
-        Label(root, text="Cantidad: ", background="white", font=("Arial", 12)).grid(row=5, column=3, stick=W)
+        Label(root, text="Cantidad: ", background="white", font=("Arial", 12)).grid(row=4, column=3, stick=W)
+        Label(root, text="Iva: ", background="white", font=("Arial", 12)).grid(row=5, column=3, stick=W)
+        Label(root, text="Item: ", background="white", font=("Arial", 12)).grid(row=6, column=3, stick=W)
 
         # sección de Entry
         monto_pago = ttk.Entry(root)
-        item = ttk.Entry(root)
         cantidad_item = ttk.Entry(root)
+        iva = ttk.Entry(root)
+        item = ttk.Entry(root)
 
         # Visual Entry
         monto_pago.grid(row=3, column=4, stick=W)
-        item.grid(row=4, column=4, stick=W)
-        cantidad_item.grid(row=5, column=4, stick=W)
+        cantidad_item.grid(row=4, column=4, stick=W)
+        iva.grid(row=5, column=4, stick=W)
+        item.grid(row=6, column=4, stick=W)
 
-        btn_subir = ttk.Button(root, text="Pagar",
-                               command=lambda: subir_datos(monto_pago.get(), item.get(), cantidad_item.get()))
-        btn_subir.grid(row=6, column=5)
+        btn_subir = ttk.Button(root, text="Pagar", command=subir_datos)
+        btn_subir.grid(row=7, column=5)
 
     # Labels de la sección
     Label(root, text="Seleccione un método de pago", background="white", font=("Arial", 12)).grid(row=1, column=2)
 
     # Botones para los usuarios
-    tarjeta = Button(root, text="Tarjeta de crédito", font=("Arial", 12), height=1, width=18, command=tarjeta_pago)
-    transferencia = Button(root, text="Transferencia bancaria", font=("Arial", 12), height=1, width=18,
-                           command=transferencia_pago)
-    efectivo = Button(root, text="Efectivo", font=("Arial", 12), height=1, width=18, command=efectivo_pago)
+    tarjeta = ttk.Button(root, text="Tarjeta de crédito", width=24, command=tarjeta_pago)
+    transferencia = ttk.Button(root, text="Transferencia bancaria", width=24,
+                               command=transferencia_pago)
+    efectivo = ttk.Button(root, text="Efectivo", width=24, command=efectivo_pago)
 
     # Botones visuales
     tarjeta.grid(row=2, column=2, sticky=W)
