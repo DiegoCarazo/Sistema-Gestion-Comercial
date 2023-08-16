@@ -156,6 +156,88 @@ def catalogo_de_productos():
     cantidad.grid(row=7, column=2)
     descripcion.grid(row=8, column=2)
 
+def generar_informe_ventas():
+    
+    #Creamos un codigo ficticio para la generación del informe, ya que no hay informe de ventas
+
+    Informe_Ventas = {} #Crear diccionario para el informe
+    
+    Informe_Ventas['ventas'] = []
+    
+    Informe_Ventas['ventas'].append({ #agregar las variables ficticias
+                        'cliente': 'Pedro',
+                        'producto': 'Arroz',
+                        'cantidad': 15,
+                        'precio': 1000,
+                        'total de la compra': 1000 * 15})
+    
+    Informe_Ventas['ventas'].append({
+                        'cliente': 'Adrian',
+                        'producto': 'Frijoles rojos',
+                        'cantidad': 5,
+                        'precio': 1000,
+                        'total de la compra': 1000 * 5})
+    
+    Informe_Ventas['ventas'].append({
+                        'cliente': 'Josue',
+                        'producto': 'Azucar',
+                        'cantidad': 10,
+                        'precio': 1000,
+                        'total de la compra': 1000 * 10})
+    
+    with open('Informe_Ventas.json', 'w') as f:
+        json.dump(Informe_Ventas, f, indent=4) #guardar el informe en formato JSON con indentación
+    showinfo(title='Informe Generado', message='Informe de ventas generado correctamente en formato JSON.')
+ 
+
+def generar_informe_inventario():
+    #Abrir el archivo para leerlo
+    with open("DB_Inventario.json", "r") as inventario_file:
+        inventario = json.load(inventario_file)  #Cargar datos del archivo
+
+    informe_inventario = {} #Crear diccionario para el informe
+    for producto, datos in inventario.items():
+        informe_inventario[producto] = {
+            'cantidad_disponible': datos[2]  #agregar el nombre y la cantidad disponible
+        }
+     #Abrir el archivo para escribirle
+    with open("Informe_Inventario.json", "w") as f:
+        json.dump(informe_inventario, f, indent=4) #guardar el informe en formato JSON con indentación
+    showinfo(title='Informe Generado', message='Informe de Inventario generado correctamente en formato JSON.')
+
+def generar_informe_clientes():
+     #Abrir el archivo para leerlo
+    with open("DB_Cliente.json", "r") as clientes_f: #Abrir el archivo para leerlo
+        clientes = json.load(clientes_f) #Cargar datos del archivo
+        
+    informe_clientes = {}
+    for nombre, datos in clientes.items():
+        informe_clientes[nombre] = {
+            'compras_realizadas': datos[0],  #agregar las compras y preferencias, en este caso tenemos un problema
+                                                          #ya que no hay ventas registradas a un cliente, por lo cual el programa no genera el informe con la información correcta
+            'preferencias': datos[1]
+        }
+    #Abrir el archivo para escribirle
+    with open("Informe_Clientes.json", "w") as f:
+        json.dump(informe_clientes, f, indent=4) #guardar el informe en formato JSON con indentación
+    showinfo(title='Informe Generado', message='Informe de Clientes generado correctamente en formato JSON.')
+
+ #Definir una función para generar los informes
+def generar_informes():
+    #crear una nueva ventana para los informes
+    informes_window = Toplevel(root)  
+    informes_window.title("Generación de informes") #Definir titulo de la ventana
+
+    #Crear botones para generar diferentes tipos de informes y asociarles sus respectivas funciones
+    ventas_button = ttk.Button(informes_window, text="Informe de ventas", command=generar_informe_ventas)
+    inventario_button = ttk.Button(informes_window, text="Informe de inventario", command=generar_informe_inventario)
+    clientes_button = ttk.Button(informes_window, text="Informe de clientes", command=generar_informe_clientes)
+
+    #Empaquetar los botones en la ventana
+    ventas_button.pack()
+    inventario_button.pack()
+    clientes_button.pack()
+
 
 def sistema_pagos():
     def tarjeta_pago():
@@ -341,5 +423,8 @@ productos.grid(row=2, column=0, sticky=W)
 
 pagos = ttk.Button(root, text="Sistema pagos", command=sistema_pagos, width=20)
 pagos.grid(row=3, column=0, sticky=W)
+
+informes = ttk.Button(root, text="Generación de informes", command=generar_informes)
+informes.grid(row=4, column=0, sticky=W)
 
 root.mainloop()
